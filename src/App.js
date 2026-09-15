@@ -378,6 +378,19 @@ const styles = `
   }
   .summary-row .label { color: #4a5568; font-weight: 500; }
   .summary-row .value { font-weight: 600; color: #1a202c; white-space: nowrap; }
+  .summary-row.deduction .value { color: #c53030; }
+  .summary-row.net {
+    background: #f0fff4;
+    border: 1px solid #9ae6b4;
+    border-radius: 8px;
+    margin-top: 6px;
+    padding: 10px 14px;
+  }
+  .summary-row.net .label {
+    color: #22543d; font-weight: 700; font-size: 11.5px;
+    letter-spacing: 1.2px; text-transform: uppercase;
+  }
+  .summary-row.net .value { color: #22543d; font-size: 15px; font-weight: 700; }
   .summary-row.total {
     background: linear-gradient(135deg, #1e3a5f, #2c5282);
     color: #fff; border-radius: 8px; border-bottom: none;
@@ -461,6 +474,7 @@ const styles = `
     .summary { max-width: 100%; }
     .summary-row { font-size: 12px; padding: 8px 10px; }
     .summary-row.total .value { font-size: 14px; }
+    .summary-row.net .value { font-size: 14px; }
     .footer-grid { gap: 16px; }
     .signature { flex: 1 1 100%; }
     .invoice { border-radius: 10px; }
@@ -507,10 +521,12 @@ const styles = `
     tbody td { padding: 7px 6px; font-size: 10.5px; }
     .item-sub { font-size: 10px; }
 
-    .summary { max-width: 300px; }
+    .summary { max-width: 320px; }
     .summary-row { padding: 5px 10px; font-size: 11px; }
     .summary-row.total { padding: 8px 10px; }
     .summary-row.total .value { font-size: 13px; }
+    .summary-row.net { padding: 8px 10px; }
+    .summary-row.net .value { font-size: 13px; }
 
     .amount-words { padding: 8px 12px; font-size: 10.5px; margin-bottom: 14px; }
 
@@ -531,7 +547,7 @@ const styles = `
       break-inside: avoid;
     }
 
-    .header, thead th, .summary-row.total, .invoice-title, .amount-words,
+    .header, thead th, .summary-row.total, .summary-row.net, .invoice-title, .amount-words,
     tbody tr:nth-child(even) {
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
@@ -548,13 +564,14 @@ const buildDefaultItem = () => ({
   location: "",
   description: "Capacity Building of Entrepreneurs",
   customDescription: "",
-  sector: "Manufacturing",
+  sector: "Food Processing",
   customSector: "",
   startDate: "",
   endDate: "",
   persons: 30,
   daysPerPerson: 3,
   ratePerDay: 593.22,
+  advanceReceived: 10000,  // 👈 default advance per training
 });
 
 const buildDefaultForm = (invoiceNo = "TRAINING/UDR/01") => ({
@@ -686,6 +703,9 @@ export default function App() {
       if (key.endsWith(".ratePerDay")) {
         if (!value || Number(value) <= 0) msg = "Rate must be greater than 0";
       }
+      if (key.endsWith(".advanceReceived")) {
+        if (value === "" || Number(value) < 0) msg = "Advance must be 0 or more";
+      }
     }
 
     setErrors((prev) => {
@@ -719,7 +739,6 @@ export default function App() {
         ["ratePerDay", "Rate must be greater than 0"],
       ];
 
-      // If "Other" is selected, custom text is required
       if (item.description === "Other" && !String(item.customDescription).trim()) {
         fieldsToCheck.push(["customDescription", "Please type custom description"]);
       }
@@ -763,27 +782,38 @@ export default function App() {
           Number(item.ratePerDay || 0),
       0
     );
+    const totalAdvance = formData.items.reduce(
+      (sum, item) => sum + Number(item.advanceReceived || 0),
+      0
+    );
     const cgstAmount = (subTotal * formData.cgst) / 100;
     const sgstAmount = (subTotal * formData.sgst) / 100;
-    const grandTotal = subTotal + cgstAmount + sgstAmount;
+    const grossTotal = subTotal + cgstAmount + sgstAmount;
+    const grandTotal = grossTotal - totalAdvance;  // 👈 advance deduct
     const totalPersons = formData.items.reduce(
       (sum, item) => sum + Number(item.persons || 0),
       0
     );
-    return { subTotal, cgstAmount, sgstAmount, grandTotal, totalPersons };
+    return {
+      subTotal,
+      totalAdvance,
+      cgstAmount,
+      sgstAmount,
+      grossTotal,
+      grandTotal,
+      totalPersons,
+    };
   }, [formData.items, formData.cgst, formData.sgst]);
 
   const errorList = Object.values(errors);
   const hasErrors = errorList.length > 0;
   const err = (key) => (touched[key] && errors[key] ? errors[key] : "");
 
-  /* Helper: get final description text */
   const getFinalDescription = (item) =>
     item.description === "Other"
       ? item.customDescription || ""
       : item.description;
 
-  /* Helper: get final sector text */
   const getFinalSector = (item) =>
     item.sector === "Other" ? item.customSector || "" : item.sector;
 
@@ -950,7 +980,7 @@ export default function App() {
               </datalist>
 
               {formData.items.map((item, index) => {
-                const itemHasError = ["location", "description", "sector", "customDescription", "customSector", "startDate", "endDate", "persons", "daysPerPerson", "ratePerDay"]
+                const itemHasError = ["location", "description", "sector", "customDescription", "customSector", "startDate", "endDate", "persons", "daysPerPerson", "ratePerDay", "advanceReceived"]
                   .some((f) => err(`items.${index}.${f}`));
                 return (
                   <div key={item.id} className={`item-card ${itemHasError ? "has-error" : ""}`}>
@@ -981,7 +1011,6 @@ export default function App() {
                         )}
                       </div>
 
-                      {/* ===== DESCRIPTION DROPDOWN ===== */}
                       <div className="field full">
                         <label>Description / Type <span className="required">*</span></label>
                         <select
@@ -999,7 +1028,6 @@ export default function App() {
                         )}
                       </div>
 
-                      {/* ===== CUSTOM DESCRIPTION INPUT (only if Other) ===== */}
                       {item.description === "Other" && (
                         <div className="field full">
                           <label>Custom Description <span className="required">*</span></label>
@@ -1017,7 +1045,6 @@ export default function App() {
                         </div>
                       )}
 
-                      {/* ===== SECTOR DROPDOWN ===== */}
                       <div className="field full">
                         <label>Sector <span className="required">*</span></label>
                         <select
@@ -1035,7 +1062,6 @@ export default function App() {
                         )}
                       </div>
 
-                      {/* ===== CUSTOM SECTOR INPUT (only if Other) ===== */}
                       {item.sector === "Other" && (
                         <div className="field full">
                           <label>Custom Sector <span className="required">*</span></label>
@@ -1126,6 +1152,25 @@ export default function App() {
                         />
                         {err(`items.${index}.ratePerDay`) && (
                           <span className="error-msg">{err(`items.${index}.ratePerDay`)}</span>
+                        )}
+                      </div>
+
+                      {/* ===== ADVANCE RECEIVED ===== */}
+                      <div className="field full">
+                        <label>Advance Received (₹) <span className="required">*</span></label>
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          placeholder="Advance received per training"
+                          className={err(`items.${index}.advanceReceived`) ? "error" : ""}
+                          value={item.advanceReceived}
+                          onChange={(e) => updateItem(index, "advanceReceived", e.target.value)}
+                          onBlur={() => validateField(`items.${index}.advanceReceived`, item.advanceReceived)}
+                        />
+                        <span className="hint">Default ₹10,000 — change if different</span>
+                        {err(`items.${index}.advanceReceived`) && (
+                          <span className="error-msg">{err(`items.${index}.advanceReceived`)}</span>
                         )}
                       </div>
                     </div>
@@ -1254,7 +1299,20 @@ export default function App() {
                     <span className="value">₹{totals.sgstAmount.toFixed(2)}</span>
                   </div>
                   <div className="summary-row total">
-                    <span className="label">Grand Total</span>
+                    <span className="label">Gross Total</span>
+                    <span className="value">₹{totals.grossTotal.toFixed(2)}</span>
+                  </div>
+
+                  {/* ===== ADVANCE DEDUCTION ===== */}
+                  <div className="summary-row deduction">
+                    <span className="label">
+                      Less: Advance Received ({formData.items.length} × ₹10,000)
+                    </span>
+                    <span className="value">− ₹{totals.totalAdvance.toFixed(2)}</span>
+                  </div>
+
+                  <div className="summary-row net">
+                    <span className="label">Net Payable</span>
                     <span className="value">₹{totals.grandTotal.toFixed(2)}</span>
                   </div>
                 </div>
