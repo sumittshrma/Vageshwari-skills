@@ -40,7 +40,7 @@ const locationSuggestions = [
    DESCRIPTION OPTIONS
    ============================================================ */
 const descriptionOptions = [
-  "Capacity Building of Existing Entrepreneurs",
+  "Capacity Building of Entrepreneurs",
   "Capacity Building of Workmen",
   "Capacity Building of Supervisor",
   "Other",
@@ -50,16 +50,14 @@ const descriptionOptions = [
    SECTOR OPTIONS
    ============================================================ */
 const sectorOptions = [
-  "Manufacturing",
-  "Service",
-  "Trading",
-  "Agriculture",
-  "Textile",
-  "Handicraft",
   "Food Processing",
-  "IT / Software",
-  "Construction",
-  "Retail",
+  "Tourism",
+  "Entrepreneur",
+  "Apparel",
+  "Automotive",
+  "Stone Sector",
+  "Multi Sector",
+  "Chemical Sector",
   "Other",
 ];
 
@@ -548,7 +546,7 @@ const styles = `
 const buildDefaultItem = () => ({
   id: Date.now() + Math.random(),
   location: "",
-  description: "Capacity Building of Existing Entrepreneurs",
+  description: "Capacity Building of Entrepreneurs",
   customDescription: "",
   sector: "Manufacturing",
   customSector: "",
