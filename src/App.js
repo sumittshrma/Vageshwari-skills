@@ -42,6 +42,25 @@ const locationSuggestions = [
 const descriptionOptions = [
   "Capacity Building of Existing Entrepreneurs",
   "Capacity Building of Workmen",
+  "Capacity Building of Supervisor",
+  "Other",
+];
+
+/* ============================================================
+   SECTOR OPTIONS
+   ============================================================ */
+const sectorOptions = [
+  "Manufacturing",
+  "Service",
+  "Trading",
+  "Agriculture",
+  "Textile",
+  "Handicraft",
+  "Food Processing",
+  "IT / Software",
+  "Construction",
+  "Retail",
+  "Other",
 ];
 
 const months = [
@@ -388,7 +407,6 @@ const styles = `
     flex: 1 1 280px; font-size: 11.5px; color: #4a5568; line-height: 1.7;
   }
 
-  /* ============ SIGNATURE (SINGLE IMAGE) ============ */
   .signature {
     flex: 0 0 220px;
     text-align: center;
@@ -459,7 +477,6 @@ const styles = `
     .print-btn, .btn-secondary { font-size: 11.5px; padding: 9px 10px; }
   }
 
-  /* ============ PRINT ============ */
   @media print {
     body { 
       background: #fff; 
@@ -532,6 +549,9 @@ const buildDefaultItem = () => ({
   id: Date.now() + Math.random(),
   location: "",
   description: "Capacity Building of Existing Entrepreneurs",
+  customDescription: "",
+  sector: "Manufacturing",
+  customSector: "",
   startDate: "",
   endDate: "",
   persons: 30,
@@ -546,7 +566,7 @@ const buildDefaultForm = (invoiceNo = "TRAINING/UDR/01") => ({
   placeOfSupply: "Rajasthan",
   cgst: 9,
   sgst: 9,
-  signatureUrl: "",   // combined signature + seal image
+  signatureUrl: "",
   items: [buildDefaultItem()],
 });
 
@@ -563,7 +583,6 @@ export default function App() {
     if (touched[field]) validateField(field, value);
   };
 
-  /* File to Base64 */
   const handleFileUpload = (field, file) => {
     if (!file) return;
     const reader = new FileReader();
@@ -692,7 +711,7 @@ export default function App() {
     });
 
     formData.items.forEach((item, i) => {
-      [
+      const fieldsToCheck = [
         ["location", "Training location is required"],
         ["description", "Description is required"],
         ["startDate", "Start date is required"],
@@ -700,14 +719,24 @@ export default function App() {
         ["persons", "Persons must be greater than 0"],
         ["daysPerPerson", "Days must be greater than 0"],
         ["ratePerDay", "Rate must be greater than 0"],
-      ].forEach(([field, defaultMsg]) => {
+      ];
+
+      // If "Other" is selected, custom text is required
+      if (item.description === "Other" && !String(item.customDescription).trim()) {
+        fieldsToCheck.push(["customDescription", "Please type custom description"]);
+      }
+      if (item.sector === "Other" && !String(item.customSector).trim()) {
+        fieldsToCheck.push(["customSector", "Please type custom sector"]);
+      }
+
+      fieldsToCheck.forEach(([field, defaultMsg]) => {
         const key = `items.${i}.${field}`;
         newTouched[key] = true;
         const v = item[field];
         let msg = "";
         if (field === "persons" || field === "daysPerPerson" || field === "ratePerDay") {
           if (!v || Number(v) <= 0) msg = defaultMsg;
-        } else if (!String(v).trim()) {
+        } else if (!String(v || "").trim()) {
           msg = defaultMsg;
         }
         if (msg) newErrors[key] = msg;
@@ -749,6 +778,16 @@ export default function App() {
   const errorList = Object.values(errors);
   const hasErrors = errorList.length > 0;
   const err = (key) => (touched[key] && errors[key] ? errors[key] : "");
+
+  /* Helper: get final description text */
+  const getFinalDescription = (item) =>
+    item.description === "Other"
+      ? item.customDescription || ""
+      : item.description;
+
+  /* Helper: get final sector text */
+  const getFinalSector = (item) =>
+    item.sector === "Other" ? item.customSector || "" : item.sector;
 
   return (
     <>
@@ -864,7 +903,7 @@ export default function App() {
               </div>
             </div>
 
-            {/* ============ SIGNATURE + SEAL (single combined PNG) ============ */}
+            {/* ============ SIGNATURE + SEAL ============ */}
             <div className="form-section">
               <h3>Signature &amp; Seal</h3>
               <div className="form-grid">
@@ -913,7 +952,7 @@ export default function App() {
               </datalist>
 
               {formData.items.map((item, index) => {
-                const itemHasError = ["location", "description", "startDate", "endDate", "persons", "daysPerPerson", "ratePerDay"]
+                const itemHasError = ["location", "description", "sector", "customDescription", "customSector", "startDate", "endDate", "persons", "daysPerPerson", "ratePerDay"]
                   .some((f) => err(`items.${index}.${f}`));
                 return (
                   <div key={item.id} className={`item-card ${itemHasError ? "has-error" : ""}`}>
@@ -944,6 +983,7 @@ export default function App() {
                         )}
                       </div>
 
+                      {/* ===== DESCRIPTION DROPDOWN ===== */}
                       <div className="field full">
                         <label>Description / Type <span className="required">*</span></label>
                         <select
@@ -960,6 +1000,60 @@ export default function App() {
                           <span className="error-msg">{err(`items.${index}.description`)}</span>
                         )}
                       </div>
+
+                      {/* ===== CUSTOM DESCRIPTION INPUT (only if Other) ===== */}
+                      {item.description === "Other" && (
+                        <div className="field full">
+                          <label>Custom Description <span className="required">*</span></label>
+                          <input
+                            type="text"
+                            placeholder="Type your custom description"
+                            className={err(`items.${index}.customDescription`) ? "error" : ""}
+                            value={item.customDescription}
+                            onChange={(e) => updateItem(index, "customDescription", e.target.value)}
+                            onBlur={() => validateField(`items.${index}.customDescription`, item.customDescription)}
+                          />
+                          {err(`items.${index}.customDescription`) && (
+                            <span className="error-msg">{err(`items.${index}.customDescription`)}</span>
+                          )}
+                        </div>
+                      )}
+
+                      {/* ===== SECTOR DROPDOWN ===== */}
+                      <div className="field full">
+                        <label>Sector <span className="required">*</span></label>
+                        <select
+                          className={err(`items.${index}.sector`) ? "error" : ""}
+                          value={item.sector}
+                          onChange={(e) => updateItem(index, "sector", e.target.value)}
+                          onBlur={() => validateField(`items.${index}.sector`, item.sector)}
+                        >
+                          {sectorOptions.map((s) => (
+                            <option key={s} value={s}>{s}</option>
+                          ))}
+                        </select>
+                        {err(`items.${index}.sector`) && (
+                          <span className="error-msg">{err(`items.${index}.sector`)}</span>
+                        )}
+                      </div>
+
+                      {/* ===== CUSTOM SECTOR INPUT (only if Other) ===== */}
+                      {item.sector === "Other" && (
+                        <div className="field full">
+                          <label>Custom Sector <span className="required">*</span></label>
+                          <input
+                            type="text"
+                            placeholder="Type your custom sector"
+                            className={err(`items.${index}.customSector`) ? "error" : ""}
+                            value={item.customSector}
+                            onChange={(e) => updateItem(index, "customSector", e.target.value)}
+                            onBlur={() => validateField(`items.${index}.customSector`, item.customSector)}
+                          />
+                          {err(`items.${index}.customSector`) && (
+                            <span className="error-msg">{err(`items.${index}.customSector`)}</span>
+                          )}
+                        </div>
+                      )}
 
                       <div className="field">
                         <label>Start Date <span className="required">*</span></label>
@@ -1099,6 +1193,7 @@ export default function App() {
                     <tr>
                       <th style={{ width: "30px" }}>#</th>
                       <th>Category / Description</th>
+                      <th>Sector</th>
                       <th>Training Dates</th>
                       <th className="center">Days<br/>/Person</th>
                       <th className="center">Persons</th>
@@ -1119,8 +1214,11 @@ export default function App() {
                             <div className="item-category">
                               {item.location || "—"}
                             </div>
-                            <div className="item-sub">{item.description || "—"}</div>
+                            <div className="item-sub">
+                              {getFinalDescription(item) || "—"}
+                            </div>
                           </td>
+                          <td>{getFinalSector(item) || "—"}</td>
                           <td>
                             {item.startDate && item.endDate
                               ? `${formatDate(item.startDate)} to ${formatDate(item.endDate)}`
@@ -1182,7 +1280,6 @@ export default function App() {
                   </p>
                 </div>
 
-                {/* ============ SIGNATURE + SEAL (single image) ============ */}
                 <div className="signature">
                   <div className="signature-images">
                     {formData.signatureUrl && (
