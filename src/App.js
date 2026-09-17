@@ -353,7 +353,7 @@ const styles = `
   .table-wrap { width: 100%; overflow-x: auto; margin-bottom: 18px; }
   table {
     width: 100%; border-collapse: collapse; font-size: 12px;
-    min-width: 620px;
+    min-width: 750px;
   }
   thead th {
     background: #2c5282; color: #fff; font-size: 10px; font-weight: 600;
@@ -479,7 +479,7 @@ const styles = `
     .signature { flex: 1 1 100%; }
     .invoice { border-radius: 10px; }
     .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    table { min-width: 600px; font-size: 11.5px; }
+    table { min-width: 750px; font-size: 11.5px; }
     thead th { padding: 9px 6px; font-size: 9.5px; }
     tbody td { padding: 9px 6px; }
   }
@@ -1241,6 +1241,7 @@ export default function App() {
                       <th className="center">Persons</th>
                       <th className="num">Rate<br/>/Day/Person</th>
                       <th className="num">Amount</th>
+                      <th className="num">Advance<br/>Received</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1272,6 +1273,9 @@ export default function App() {
                             ₹{Number(item.ratePerDay || 0).toFixed(2)}
                           </td>
                           <td className="num">₹{amount.toFixed(2)}</td>
+                          <td className="num">
+                            ₹{Number(item.advanceReceived || 0).toFixed(2)}
+                          </td>
                         </tr>
                       );
                     })}
