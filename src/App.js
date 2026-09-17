@@ -58,6 +58,7 @@ const sectorOptions = [
   "Stone Sector",
   "Multi Sector",
   "Chemical Sector",
+  "Textile Sector",
   "Other",
 ];
 
