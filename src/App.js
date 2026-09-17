@@ -371,20 +371,20 @@ const styles = `
   .item-sub { font-size: 11px; color: #718096; margin-top: 2px; }
 
   .summary-wrap { display: flex; justify-content: flex-end; margin-bottom: 8px; }
-  .summary { width: 100%; max-width: 340px; }
+  .summary { width: 100%; max-width: 360px; }
   .summary-row {
     display: flex; justify-content: space-between; gap: 10px;
     padding: 8px 12px; font-size: 12.5px; border-bottom: 1px solid #e8edf3;
   }
   .summary-row .label { color: #4a5568; font-weight: 500; }
   .summary-row .value { font-weight: 600; color: #1a202c; white-space: nowrap; }
-  .summary-row.deduction .value { color: #c53030; }
+  .summary-row.deduction .value { color: #c53030; font-weight: 700; }
   .summary-row.net {
     background: #f0fff4;
     border: 1px solid #9ae6b4;
     border-radius: 8px;
     margin-top: 6px;
-    padding: 10px 14px;
+    padding: 12px 14px;
   }
   .summary-row.net .label {
     color: #22543d; font-weight: 700; font-size: 11.5px;
@@ -504,7 +504,7 @@ const styles = `
       width: 100%;
     }
     .table-wrap { overflow: visible; }
-    table { min-width: 0; font-size: 10.5px; }
+    table { min-width: 0; font-size: 9.5px; }
 
     .header { padding: 16px 18px 14px; }
     .firm-name { font-size: 16px; }
@@ -517,9 +517,9 @@ const styles = `
     .meta-box { padding: 10px 12px; }
     .meta-row { padding: 4px 0; font-size: 11px; }
 
-    thead th { padding: 7px 6px; font-size: 9px; }
-    tbody td { padding: 7px 6px; font-size: 10.5px; }
-    .item-sub { font-size: 10px; }
+    thead th { padding: 6px 4px; font-size: 8.5px; }
+    tbody td { padding: 6px 4px; font-size: 9.5px; }
+    .item-sub { font-size: 9px; }
 
     .summary { max-width: 320px; }
     .summary-row { padding: 5px 10px; font-size: 11px; }
@@ -571,7 +571,7 @@ const buildDefaultItem = () => ({
   persons: 30,
   daysPerPerson: 3,
   ratePerDay: 593.22,
-  advanceReceived: 10000,  // 👈 default advance per training
+  advanceReceived: 10000,
 });
 
 const buildDefaultForm = (invoiceNo = "TRAINING/UDR/01") => ({
@@ -789,7 +789,7 @@ export default function App() {
     const cgstAmount = (subTotal * formData.cgst) / 100;
     const sgstAmount = (subTotal * formData.sgst) / 100;
     const grossTotal = subTotal + cgstAmount + sgstAmount;
-    const grandTotal = grossTotal - totalAdvance;  // 👈 advance deduct
+    const grandTotal = grossTotal - totalAdvance;
     const totalPersons = formData.items.reduce(
       (sum, item) => sum + Number(item.persons || 0),
       0
@@ -1155,20 +1155,19 @@ export default function App() {
                         )}
                       </div>
 
-                      {/* ===== ADVANCE RECEIVED ===== */}
                       <div className="field full">
                         <label>Advance Received (₹) <span className="required">*</span></label>
                         <input
                           type="number"
                           min="0"
                           step="0.01"
-                          placeholder="Advance received per training"
+                          placeholder="Advance received for this training"
                           className={err(`items.${index}.advanceReceived`) ? "error" : ""}
                           value={item.advanceReceived}
                           onChange={(e) => updateItem(index, "advanceReceived", e.target.value)}
                           onBlur={() => validateField(`items.${index}.advanceReceived`, item.advanceReceived)}
                         />
-                        <span className="hint">Default ₹10,000 — change if different</span>
+                        <span className="hint">Har training ka advance alag ho sakta hai</span>
                         {err(`items.${index}.advanceReceived`) && (
                           <span className="error-msg">{err(`items.${index}.advanceReceived`)}</span>
                         )}
@@ -1303,11 +1302,8 @@ export default function App() {
                     <span className="value">₹{totals.grossTotal.toFixed(2)}</span>
                   </div>
 
-                  {/* ===== ADVANCE DEDUCTION ===== */}
                   <div className="summary-row deduction">
-                    <span className="label">
-                      Less: Advance Received ({formData.items.length} × ₹10,000)
-                    </span>
+                    <span className="label">Less: Advance Received</span>
                     <span className="value">− ₹{totals.totalAdvance.toFixed(2)}</span>
                   </div>
 
