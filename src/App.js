@@ -76,6 +76,22 @@ const getTodayISO = () => {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 };
 
+// "August 2026" -> { start: "2026-08-01", end: "2026-08-31" }
+const monthToDateRange = (monthLabel) => {
+  const [monthName, year] = monthLabel.split(" ");
+  const monthIndex = new Date(`${monthName} 1, ${year}`).getMonth();
+  const y = Number(year);
+  const first = new Date(y, monthIndex, 1);
+  const last = new Date(y, monthIndex + 1, 0);
+
+  const toISO = (d) =>
+    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+      d.getDate()
+    ).padStart(2, "0")}`;
+
+  return { start: toISO(first), end: toISO(last) };
+};
+
 const numberToWords = (num) => {
   const a = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight",
     "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen",
@@ -560,31 +576,44 @@ const styles = `
 /* ============================================================
    DEFAULT FORM STATE BUILDERS
    ============================================================ */
-const buildDefaultItem = () => ({
-  id: Date.now() + Math.random(),
-  location: "",
-  description: "Capacity Building of Entrepreneurs",
-  customDescription: "",
-  sector: "Food Processing",
-  customSector: "",
-  startDate: "",
-  endDate: "",
-  persons: 30,
-  daysPerPerson: 3,
-  ratePerDay: 593.22,
-  advanceReceived: 10000,
-});
+const DEFAULT_MONTH = "August 2026";
+const DEFAULT_RATE = 700;
 
-const buildDefaultForm = (invoiceNo = "TRAINING/UDR/01") => ({
-  invoiceNo,
-  month: "August 2026",
-  invoiceDate: getTodayISO(),
-  placeOfSupply: "Rajasthan",
-  cgst: 9,
-  sgst: 9,
-  signatureUrl: "",
-  items: [buildDefaultItem()],
-});
+const buildDefaultItem = (monthLabel = DEFAULT_MONTH) => {
+  const { start, end } = monthToDateRange(monthLabel);
+  return {
+    id: Date.now() + Math.random(),
+    location: "",
+    description: "Capacity Building of Entrepreneurs",
+    customDescription: "",
+    sector: "Food Processing",
+    customSector: "",
+    startDate: start,
+    endDate: end,
+    persons: 30,
+    daysPerPerson: daysBetween(start, end) || 3,
+    ratePerDay: DEFAULT_RATE,
+    advanceReceived: 10000,
+  };
+};
+
+const buildDefaultForm = (invoiceNo = "TRAINING/UDR/01") => {
+  const { start, end } = monthToDateRange(DEFAULT_MONTH);
+  const item = buildDefaultItem(DEFAULT_MONTH);
+  item.startDate = start;
+  item.endDate = end;
+
+  return {
+    invoiceNo,
+    month: DEFAULT_MONTH,
+    invoiceDate: getTodayISO(),
+    placeOfSupply: "Rajasthan",
+    cgst: 9,
+    sgst: 9,
+    signatureUrl: "",
+    items: [item],
+  };
+};
 
 /* ============================================================
    MAIN APP
@@ -595,7 +624,21 @@ export default function App() {
   const [touched, setTouched] = useState({});
 
   const handleChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData((prev) => {
+      // If month changed, update all items' start/end dates to that month
+      if (field === "month") {
+        const { start, end } = monthToDateRange(value);
+        const updatedItems = prev.items.map((it) => ({
+          ...it,
+          startDate: start,
+          endDate: end,
+          daysPerPerson: daysBetween(start, end) || it.daysPerPerson,
+        }));
+        return { ...prev, month: value, items: updatedItems };
+      }
+      return { ...prev, [field]: value };
+    });
+
     if (touched[field]) validateField(field, value);
   };
 
@@ -625,10 +668,14 @@ export default function App() {
   };
 
   const addItem = () => {
-    setFormData((prev) => ({
-      ...prev,
-      items: [...prev.items, buildDefaultItem()],
-    }));
+    setFormData((prev) => {
+      const { start, end } = monthToDateRange(prev.month);
+      const newItem = buildDefaultItem(prev.month);
+      newItem.startDate = start;
+      newItem.endDate = end;
+      newItem.daysPerPerson = daysBetween(start, end) || newItem.daysPerPerson;
+      return { ...prev, items: [...prev.items, newItem] };
+    });
   };
 
   const removeItem = (index) => {
@@ -876,6 +923,7 @@ export default function App() {
                       <option key={m} value={m}>{m}</option>
                     ))}
                   </select>
+                  <span className="hint">Changing month auto-fills Start/End dates</span>
                 </div>
 
                 <div className="field">
