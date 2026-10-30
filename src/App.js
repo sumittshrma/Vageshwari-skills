@@ -723,11 +723,16 @@ const styles = `
   .letter-body { text-align: justify; margin-bottom: 16px; }
   .letter-programs-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
     margin: 16px 0 20px;
     font-family: sans-serif;
     font-size: 12.5px;
+  }
+  @media (max-width: 600px) {
+    .letter-programs-grid {
+      grid-template-columns: 1fr;
+    }
   }
   .program-card-preview {
     border: 1px solid #cbd5e0;
@@ -881,10 +886,8 @@ export default function App() {
         {
           id: Date.now(),
           title: "Capacity Building of Entrepreneurs",
-          block: "",
           duration: "14th to 16th October, 2026",
           venue: "",
-          sector: "Multisector",
         },
       ],
     }));
@@ -1373,30 +1376,6 @@ export default function App() {
                           />
                         </div>
 
-                        <div className="field">
-                          <label>Block / ULB</label>
-                          <input
-                            type="text"
-                            value={prog.block}
-                            onChange={(e) =>
-                              handleProgramChange(idx, "block", e.target.value)
-                            }
-                            placeholder="e.g. Sagwara"
-                          />
-                        </div>
-
-                        <div className="field">
-                          <label>Sector</label>
-                          <input
-                            type="text"
-                            value={prog.sector}
-                            onChange={(e) =>
-                              handleProgramChange(idx, "sector", e.target.value)
-                            }
-                            placeholder="e.g. Stone / Multisector"
-                          />
-                        </div>
-
                         <div className="field full">
                           <label>Training Duration</label>
                           <input
@@ -1509,10 +1488,8 @@ export default function App() {
                       <div key={p.id} className="program-card-preview">
                         <div><strong>{i + 1}. {p.title || "—"}</strong></div>
                         <div><strong>District:</strong> {permData.district || "—"}</div>
-                        {p.block && <div><strong>Block/ULB:</strong> {p.block}</div>}
-                        {p.sector && <div><strong>Sector:</strong> {p.sector}</div>}
                         <div><strong>Training Duration:</strong> {p.duration || "—"}</div>
-                        <div><strong>Venue:</strong> {p.venue || "___________________________"}</div>
+                        <div><strong>Venue address:</strong> {p.venue || "___________________________"}</div>
                       </div>
                     ))}
                   </div>
@@ -1568,10 +1545,8 @@ export default function App() {
                       <div key={p.id} className="program-card-preview">
                         <div><strong>{i + 1}. {p.title || "—"}</strong></div>
                         <div><strong>District:</strong> {permData.district || "—"}</div>
-                        {p.block && <div><strong>Block/ULB:</strong> {p.block}</div>}
-                        {p.sector && <div><strong>Sector:</strong> {p.sector}</div>}
                         <div><strong>Training Duration:</strong> {p.duration || "—"}</div>
-                        <div><strong>Venue:</strong> {p.venue || "___________________________"}</div>
+                        <div><strong>Venue address:</strong> {p.venue || "___________________________"}</div>
                       </div>
                     ))}
                   </div>
