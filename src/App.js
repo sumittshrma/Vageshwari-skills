@@ -76,7 +76,6 @@ const getTodayISO = () => {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 };
 
-// "August 2026" -> { start: "2026-08-01", end: "2026-08-31" }
 const monthToDateRange = (monthLabel) => {
   const [monthName, year] = monthLabel.split(" ");
   const monthIndex = new Date(`${monthName} 1, ${year}`).getMonth();
@@ -139,12 +138,200 @@ const styles = `
     font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
     background: #eef1f5;
     color: #1f2d3d;
-    padding: 16px;
+    padding-bottom: 24px;
     -webkit-text-size-adjust: 100%;
   }
 
-  .app { max-width: 1400px; margin: 0 auto; }
+  .app-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
 
+  /* Navigation Bar */
+  .navbar {
+    background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%);
+    color: #fff;
+    padding: 14px 24px;
+    margin-bottom: 20px;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+  }
+  .brand-logo-icon {
+    width: 38px;
+    height: 38px;
+    background: #f6ad55;
+    color: #1a202c;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 18px;
+  }
+  .brand-title {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .brand-sub {
+    font-size: 10px;
+    color: #fbd38d;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .nav-links {
+    display: flex;
+    gap: 10px;
+  }
+  .nav-btn {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .nav-btn:hover, .nav-btn.active {
+    background: #f6ad55;
+    color: #1a202c;
+    border-color: #f6ad55;
+  }
+
+  /* Home Dashboard */
+  .hero-card {
+    background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%);
+    color: #fff;
+    border-radius: 16px;
+    padding: 36px 32px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(30, 58, 95, 0.2);
+  }
+  .hero-card::after {
+    content: "";
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #f6ad55, #ed8936);
+  }
+  .hero-content { max-width: 720px; }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(246, 173, 85, 0.2);
+    color: #fbd38d;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .hero-title {
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  .hero-desc {
+    font-size: 15px;
+    color: #cbd5e0;
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .btn-hero-primary {
+    background: #f6ad55;
+    color: #1a202c;
+    border: none;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(246, 173, 85, 0.4);
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  .btn-hero-primary:hover {
+    background: #ed8936;
+    transform: translateY(-2px);
+  }
+  .btn-hero-secondary {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .btn-hero-secondary:hover { background: rgba(255, 255, 255, 0.2); }
+
+  /* Dashboard Grid */
+  .home-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+  .dash-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid #e2e8f0;
+  }
+  .dash-card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2c5282;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .info-list { display: flex; flex-direction: column; gap: 10px; font-size: 13px; }
+  .info-item { display: flex; justify-content: space-between; gap: 8px; }
+  .info-item label { color: #718096; font-weight: 500; }
+  .info-item span { color: #1a202c; font-weight: 600; text-align: right; }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-top: 10px;
+  }
+  .feature-box {
+    background: #f7fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 14px;
+  }
+  .feature-title { font-size: 13px; font-weight: 700; color: #1a202c; margin-bottom: 4px; }
+  .feature-desc { font-size: 11.5px; color: #718096; line-height: 1.4; }
+
+  /* Existing Invoice Styles */
   .error-banner {
     background: #fff5f5;
     border: 1px solid #fc8181;
@@ -163,9 +350,11 @@ const styles = `
   .error-banner li { margin-bottom: 2px; }
 
   .toolbar {
-    display: flex; justify-content: flex-end; gap: 10px;
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
     margin-bottom: 14px; flex-wrap: wrap;
   }
+  .toolbar-left { display: flex; align-items: center; gap: 8px; }
+  .toolbar-right { display: flex; gap: 10px; }
   .print-btn, .btn-secondary {
     border: none; padding: 10px 18px; font-size: 13px; font-weight: 600;
     border-radius: 8px; cursor: pointer; white-space: nowrap;
@@ -477,9 +666,16 @@ const styles = `
   .terms strong { color: #4a5568; }
 
   @media (max-width: 640px) {
-    body { padding: 10px; }
-    .toolbar { justify-content: stretch; }
-    .toolbar button { flex: 1; padding: 10px 12px; font-size: 12.5px; }
+    .navbar { padding: 12px 16px; }
+    .brand-title { font-size: 14px; }
+    .hero-card { padding: 24px 20px; }
+    .hero-title { font-size: 22px; }
+    .hero-actions { flex-direction: column; }
+    .btn-hero-primary, .btn-hero-secondary { width: 100%; text-align: center; }
+
+    .toolbar { justify-content: stretch; flex-direction: column; align-items: stretch; }
+    .toolbar-left, .toolbar-right { width: 100%; flex-direction: column; }
+    .toolbar button { width: 100%; padding: 10px 12px; font-size: 12.5px; }
     .header { padding: 18px 16px 16px; }
     .header-top { flex-direction: column; gap: 12px; }
     .firm-name { font-size: 16px; }
@@ -616,16 +812,19 @@ const buildDefaultForm = (invoiceNo = "TRAINING/UDR/01") => {
 };
 
 /* ============================================================
-   MAIN APP
+   MAIN APP COMPONENT
    ============================================================ */
 export default function App() {
+  // Navigation view state: 'home' | 'invoice'
+  const [currentView, setCurrentView] = useState("home");
+
+  // Form State
   const [formData, setFormData] = useState(buildDefaultForm());
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
 
   const handleChange = (field, value) => {
     setFormData((prev) => {
-      // If month changed, update all items' start/end dates to that month
       if (field === "month") {
         const { start, end } = monthToDateRange(value);
         const updatedItems = prev.items.map((it) => ({
@@ -868,545 +1067,710 @@ export default function App() {
   return (
     <>
       <style>{styles}</style>
-      <div className="app">
 
-        {hasErrors && Object.keys(touched).length > 0 && (
-          <div className="error-banner no-print">
-            <div>
-              <div>⚠️ Some fields are empty or invalid — please fix them first:</div>
-              <ul>
-                {errorList.slice(0, 6).map((e, i) => (
-                  <li key={i}>{e}</li>
-                ))}
-                {errorList.length > 6 && <li>...and {errorList.length - 6} more</li>}
-              </ul>
+      {/* Navigation Header */}
+      <nav className="navbar no-print">
+        <div className="nav-brand" onClick={() => setCurrentView("home")}>
+          <div className="brand-logo-icon">V</div>
+          <div>
+            <div className="brand-title">{businessDetails.firmName}</div>
+            <div className="brand-sub">{businessDetails.tagline}</div>
+          </div>
+        </div>
+        <div className="nav-links">
+          <button
+            className={`nav-btn ${currentView === "home" ? "active" : ""}`}
+            onClick={() => setCurrentView("home")}
+          >
+            🏠 Home
+          </button>
+          <button
+            className={`nav-btn ${currentView === "invoice" ? "active" : ""}`}
+            onClick={() => setCurrentView("invoice")}
+          >
+            🧾 Invoice Generator
+          </button>
+        </div>
+      </nav>
+
+      <div className="app-container">
+        {/* ============================================================
+           VIEW 1: HOME PAGE DASHBOARD
+           ============================================================ */}
+        {currentView === "home" && (
+          <div className="home-dashboard">
+            {/* Hero Card */}
+            <div className="hero-card">
+              <div className="hero-content">
+                <span className="hero-badge">Official Training Portal</span>
+                <h1 className="hero-title">{businessDetails.firmName}</h1>
+                <p className="hero-desc">
+                  Empowering professionals with specialized Capacity Building &amp; Skill Development programs across Rajasthan. Create GST-compliant GST invoices in seconds.
+                </p>
+                <div className="hero-actions">
+                  <button
+                    className="btn-hero-primary"
+                    onClick={() => setCurrentView("invoice")}
+                  >
+                    🧾 Go to Invoice Generator
+                  </button>
+                  <button
+                    className="btn-hero-secondary"
+                    onClick={() => {
+                      const el = document.getElementById("biz-details-card");
+                      if (el) el.scrollIntoView({ behavior: "smooth" });
+                    }}
+                  >
+                    📋 View Business Details
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Overview Cards */}
+            <div className="home-grid">
+              <div className="dash-card" id="biz-details-card">
+                <div className="dash-card-title">🏢 Firm Information</div>
+                <div className="info-list">
+                  <div className="info-item">
+                    <label>GSTIN</label>
+                    <span>{businessDetails.gstin}</span>
+                  </div>
+                  <div className="info-item">
+                    <label>State &amp; Code</label>
+                    <span>{businessDetails.state} ({businessDetails.stateCode})</span>
+                  </div>
+                  <div className="info-item">
+                    <label>Phone</label>
+                    <span>{businessDetails.phone}</span>
+                  </div>
+                  <div className="info-item">
+                    <label>Address</label>
+                    <span style={{ fontSize: "11px", maxWidth: "180px" }}>{businessDetails.addressLine1}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="dash-card">
+                <div className="dash-card-title">🤝 Client / Buyer Info</div>
+                <div className="info-list">
+                  <div className="info-item">
+                    <label>Buyer Name</label>
+                    <span>{buyerDetails.name}</span>
+                  </div>
+                  <div className="info-item">
+                    <label>Buyer GSTIN</label>
+                    <span>{buyerDetails.gstin}</span>
+                  </div>
+                  <div className="info-item">
+                    <label>State</label>
+                    <span>{buyerDetails.state}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="dash-card">
+                <div className="dash-card-title">🏦 Bank Account Details</div>
+                <div className="info-list">
+                  <div className="info-item">
+                    <label>Bank Name</label>
+                    <span>CANARA BANK</span>
+                  </div>
+                  <div className="info-item">
+                    <label>Account No.</label>
+                    <span>120041033031</span>
+                  </div>
+                  <div className="info-item">
+                    <label>IFSC Code</label>
+                    <span>CNRB0018450</span>
+                  </div>
+                  <div className="info-item">
+                    <label>Branch</label>
+                    <span>BAPU BAZAR UDAIPUR</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* System Highlights / Quick Start */}
+            <div className="dash-card" style={{ marginBottom: "24px" }}>
+              <div className="dash-card-title">⚡ Key System Features</div>
+              <div className="features-grid">
+                <div className="feature-box">
+                  <div className="feature-title">📍 All 41 Districts</div>
+                  <div className="feature-desc">Integrated autocomplete suggestions for training locations across Rajasthan.</div>
+                </div>
+                <div className="feature-box">
+                  <div className="feature-title">📅 Auto Date &amp; Days</div>
+                  <div className="feature-desc">Select a month to auto-populate exact date ranges and person-day calculations.</div>
+                </div>
+                <div className="feature-box">
+                  <div className="feature-title">🔏 Signature &amp; Seal</div>
+                  <div className="feature-desc">Upload signature image once; it automatically retains across consecutive invoices.</div>
+                </div>
+                <div className="feature-box">
+                  <div className="feature-title">🖨️ A4 PDF Print Ready</div>
+                  <div className="feature-desc">Pixel-perfect print styling tailored for single-page A4 PDF downloads.</div>
+                </div>
+              </div>
             </div>
           </div>
         )}
 
-        <div className="toolbar no-print">
-          <button className="btn-secondary" onClick={nextInvoiceNo}>
-            ➕ Next Invoice No.
-          </button>
-          <button className="print-btn" onClick={handlePrint}>
-            🖨️ Print / Save as PDF
-          </button>
-        </div>
-
-        <div className="layout">
-          {/* ============ FORM PANEL ============ */}
-          <div className="form-panel no-print">
-            <h2 className="form-title">🧾 Invoice Details</h2>
-
-            <div className="form-section">
-              <h3>Invoice Info</h3>
-              <div className="form-grid">
-                <div className="field">
-                  <label>Invoice No. <span className="required">*</span></label>
-                  <input
-                    type="text"
-                    className={err("invoiceNo") ? "error" : ""}
-                    value={formData.invoiceNo}
-                    onChange={(e) => handleChange("invoiceNo", e.target.value)}
-                    onBlur={() => validateField("invoiceNo", formData.invoiceNo)}
-                  />
-                  {err("invoiceNo") && <span className="error-msg">{err("invoiceNo")}</span>}
-                </div>
-
-                <div className="field">
-                  <label>Month <span className="required">*</span></label>
-                  <select
-                    value={formData.month}
-                    onChange={(e) => handleChange("month", e.target.value)}
-                  >
-                    {months.map((m) => (
-                      <option key={m} value={m}>{m}</option>
-                    ))}
-                  </select>
-                  <span className="hint">Changing month auto-fills Start/End dates</span>
-                </div>
-
-                <div className="field">
-                  <label>Invoice Date <span className="required">*</span></label>
-                  <input
-                    type="date"
-                    className={err("invoiceDate") ? "error" : ""}
-                    value={formData.invoiceDate}
-                    onChange={(e) => handleChange("invoiceDate", e.target.value)}
-                    onBlur={() => validateField("invoiceDate", formData.invoiceDate)}
-                  />
-                  {err("invoiceDate") && <span className="error-msg">{err("invoiceDate")}</span>}
-                </div>
-
-                <div className="field">
-                  <label>Place of Supply</label>
-                  <select
-                    value={formData.placeOfSupply}
-                    onChange={(e) => handleChange("placeOfSupply", e.target.value)}
-                  >
-                    <option value="Rajasthan">Rajasthan</option>
-                    <option value="Telangana">Telangana</option>
-                    <option value="Gujarat">Gujarat</option>
-                    <option value="Maharashtra">Maharashtra</option>
-                    <option value="Delhi">Delhi</option>
-                  </select>
-                </div>
-
-                <div className="field">
-                  <label>CGST %</label>
-                  <select
-                    value={formData.cgst}
-                    onChange={(e) => handleChange("cgst", parseFloat(e.target.value))}
-                  >
-                    <option value={0}>0%</option>
-                    <option value={2.5}>2.5%</option>
-                    <option value={6}>6%</option>
-                    <option value={9}>9%</option>
-                  </select>
-                </div>
-
-                <div className="field">
-                  <label>SGST %</label>
-                  <select
-                    value={formData.sgst}
-                    onChange={(e) => handleChange("sgst", parseFloat(e.target.value))}
-                  >
-                    <option value={0}>0%</option>
-                    <option value={2.5}>2.5%</option>
-                    <option value={6}>6%</option>
-                    <option value={9}>9%</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            {/* ============ SIGNATURE + SEAL ============ */}
-            <div className="form-section">
-              <h3>Signature &amp; Seal</h3>
-              <div className="form-grid">
-                <div className="field full">
-                  <label>Upload Signature + Seal (single PNG)</label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) =>
-                      handleFileUpload("signatureUrl", e.target.files[0])
-                    }
-                  />
-                  {formData.signatureUrl && (
-                    <div className="upload-preview">
-                      <img src={formData.signatureUrl} alt="Signature & Seal preview" />
-                      <div>
-                        <button
-                          className="btn-clear"
-                          type="button"
-                          onClick={() =>
-                            setFormData((prev) => ({ ...prev, signatureUrl: "" }))
-                          }
-                        >
-                          ✕ Remove
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                  <span className="hint">
-                    Transparent PNG best hai — Next Invoice par bhi retain rahega
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="form-section">
-              <div className="items-header">
-                <h3>Training Items</h3>
-                <button className="btn-add" onClick={addItem}>+ Add Item</button>
-              </div>
-
-              <datalist id="location-suggestions">
-                {locationSuggestions.map((loc) => (
-                  <option key={loc} value={loc} />
-                ))}
-              </datalist>
-
-              {formData.items.map((item, index) => {
-                const itemHasError = ["location", "description", "sector", "customDescription", "customSector", "startDate", "endDate", "persons", "daysPerPerson", "ratePerDay", "advanceReceived"]
-                  .some((f) => err(`items.${index}.${f}`));
-                return (
-                  <div key={item.id} className={`item-card ${itemHasError ? "has-error" : ""}`}>
-                    <div className="item-card-header">
-                      <span>Item #{index + 1}</span>
-                      {formData.items.length > 1 && (
-                        <button className="btn-remove" onClick={() => removeItem(index)}>
-                          ✕
-                        </button>
-                      )}
-                    </div>
-
-                    <div className="form-grid">
-                      <div className="field full">
-                        <label>Training Location <span className="required">*</span></label>
-                        <input
-                          type="text"
-                          list="location-suggestions"
-                          placeholder="Type or select (Rajasthan districts)"
-                          className={err(`items.${index}.location`) ? "error" : ""}
-                          value={item.location}
-                          onChange={(e) => updateItem(index, "location", e.target.value)}
-                          onBlur={() => validateField(`items.${index}.location`, item.location)}
-                        />
-                        <span className="hint">Suggestions from all 41 districts of Rajasthan</span>
-                        {err(`items.${index}.location`) && (
-                          <span className="error-msg">{err(`items.${index}.location`)}</span>
-                        )}
-                      </div>
-
-                      <div className="field full">
-                        <label>Description / Type <span className="required">*</span></label>
-                        <select
-                          className={err(`items.${index}.description`) ? "error" : ""}
-                          value={item.description}
-                          onChange={(e) => updateItem(index, "description", e.target.value)}
-                          onBlur={() => validateField(`items.${index}.description`, item.description)}
-                        >
-                          {descriptionOptions.map((d) => (
-                            <option key={d} value={d}>{d}</option>
-                          ))}
-                        </select>
-                        {err(`items.${index}.description`) && (
-                          <span className="error-msg">{err(`items.${index}.description`)}</span>
-                        )}
-                      </div>
-
-                      {item.description === "Other" && (
-                        <div className="field full">
-                          <label>Custom Description <span className="required">*</span></label>
-                          <input
-                            type="text"
-                            placeholder="Type your custom description"
-                            className={err(`items.${index}.customDescription`) ? "error" : ""}
-                            value={item.customDescription}
-                            onChange={(e) => updateItem(index, "customDescription", e.target.value)}
-                            onBlur={() => validateField(`items.${index}.customDescription`, item.customDescription)}
-                          />
-                          {err(`items.${index}.customDescription`) && (
-                            <span className="error-msg">{err(`items.${index}.customDescription`)}</span>
-                          )}
-                        </div>
-                      )}
-
-                      <div className="field full">
-                        <label>Sector <span className="required">*</span></label>
-                        <select
-                          className={err(`items.${index}.sector`) ? "error" : ""}
-                          value={item.sector}
-                          onChange={(e) => updateItem(index, "sector", e.target.value)}
-                          onBlur={() => validateField(`items.${index}.sector`, item.sector)}
-                        >
-                          {sectorOptions.map((s) => (
-                            <option key={s} value={s}>{s}</option>
-                          ))}
-                        </select>
-                        {err(`items.${index}.sector`) && (
-                          <span className="error-msg">{err(`items.${index}.sector`)}</span>
-                        )}
-                      </div>
-
-                      {item.sector === "Other" && (
-                        <div className="field full">
-                          <label>Custom Sector <span className="required">*</span></label>
-                          <input
-                            type="text"
-                            placeholder="Type your custom sector"
-                            className={err(`items.${index}.customSector`) ? "error" : ""}
-                            value={item.customSector}
-                            onChange={(e) => updateItem(index, "customSector", e.target.value)}
-                            onBlur={() => validateField(`items.${index}.customSector`, item.customSector)}
-                          />
-                          {err(`items.${index}.customSector`) && (
-                            <span className="error-msg">{err(`items.${index}.customSector`)}</span>
-                          )}
-                        </div>
-                      )}
-
-                      <div className="field">
-                        <label>Start Date <span className="required">*</span></label>
-                        <input
-                          type="date"
-                          className={err(`items.${index}.startDate`) ? "error" : ""}
-                          value={item.startDate}
-                          onChange={(e) => updateItem(index, "startDate", e.target.value)}
-                          onBlur={() => validateField(`items.${index}.startDate`, item.startDate)}
-                        />
-                        {err(`items.${index}.startDate`) && (
-                          <span className="error-msg">{err(`items.${index}.startDate`)}</span>
-                        )}
-                      </div>
-
-                      <div className="field">
-                        <label>End Date <span className="required">*</span></label>
-                        <input
-                          type="date"
-                          className={err(`items.${index}.endDate`) ? "error" : ""}
-                          value={item.endDate}
-                          onChange={(e) => updateItem(index, "endDate", e.target.value)}
-                          onBlur={() => validateField(`items.${index}.endDate`, item.endDate)}
-                        />
-                        {err(`items.${index}.endDate`) && (
-                          <span className="error-msg">{err(`items.${index}.endDate`)}</span>
-                        )}
-                      </div>
-
-                      <div className="field">
-                        <label>Days / Person <span className="required">*</span></label>
-                        <input
-                          type="number"
-                          min="1"
-                          className={err(`items.${index}.daysPerPerson`) ? "error" : ""}
-                          value={item.daysPerPerson}
-                          onChange={(e) => updateItem(index, "daysPerPerson", e.target.value)}
-                          onBlur={() => validateField(`items.${index}.daysPerPerson`, item.daysPerPerson)}
-                        />
-                        <span className="hint">Auto-calculated from dates</span>
-                        {err(`items.${index}.daysPerPerson`) && (
-                          <span className="error-msg">{err(`items.${index}.daysPerPerson`)}</span>
-                        )}
-                      </div>
-
-                      <div className="field">
-                        <label>Total Persons <span className="required">*</span></label>
-                        <input
-                          type="number"
-                          min="1"
-                          className={err(`items.${index}.persons`) ? "error" : ""}
-                          value={item.persons}
-                          onChange={(e) => updateItem(index, "persons", e.target.value)}
-                          onBlur={() => validateField(`items.${index}.persons`, item.persons)}
-                        />
-                        {err(`items.${index}.persons`) && (
-                          <span className="error-msg">{err(`items.${index}.persons`)}</span>
-                        )}
-                      </div>
-
-                      <div className="field full">
-                        <label>Rate / Day / Person (₹) <span className="required">*</span></label>
-                        <input
-                          type="number"
-                          min="0"
-                          step="0.01"
-                          placeholder="Enter rate"
-                          className={err(`items.${index}.ratePerDay`) ? "error" : ""}
-                          value={item.ratePerDay}
-                          onChange={(e) => updateItem(index, "ratePerDay", e.target.value)}
-                          onBlur={() => validateField(`items.${index}.ratePerDay`, item.ratePerDay)}
-                        />
-                        {err(`items.${index}.ratePerDay`) && (
-                          <span className="error-msg">{err(`items.${index}.ratePerDay`)}</span>
-                        )}
-                      </div>
-
-                      <div className="field full">
-                        <label>Advance Received (₹) <span className="required">*</span></label>
-                        <input
-                          type="number"
-                          min="0"
-                          step="0.01"
-                          placeholder="Advance received for this training"
-                          className={err(`items.${index}.advanceReceived`) ? "error" : ""}
-                          value={item.advanceReceived}
-                          onChange={(e) => updateItem(index, "advanceReceived", e.target.value)}
-                          onBlur={() => validateField(`items.${index}.advanceReceived`, item.advanceReceived)}
-                        />
-                        <span className="hint">Har training ka advance alag ho sakta hai</span>
-                        {err(`items.${index}.advanceReceived`) && (
-                          <span className="error-msg">{err(`items.${index}.advanceReceived`)}</span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* ============ INVOICE PREVIEW ============ */}
-          <div className="invoice">
-            <header className="header">
-              <div className="header-top">
+        {/* ============================================================
+           VIEW 2: INVOICE GENERATOR PAGE
+           ============================================================ */}
+        {currentView === "invoice" && (
+          <div>
+            {hasErrors && Object.keys(touched).length > 0 && (
+              <div className="error-banner no-print">
                 <div>
-                  <div className="firm-name">{businessDetails.firmName}</div>
-                  <div className="firm-tagline">{businessDetails.tagline}</div>
-                </div>
-                <div className="header-contact">
-                  <div>{businessDetails.addressLine1}</div>
-                  <div><strong>{businessDetails.phone}</strong></div>
-                  <div><strong>GSTIN:</strong> {businessDetails.gstin}</div>
-                  <div><strong>State:</strong> {businessDetails.state} (Code: {businessDetails.stateCode})</div>
-                </div>
-              </div>
-              <div className="invoice-title">Tax Invoice</div>
-            </header>
-
-            <div className="body">
-              <div className="top-grid">
-                <div className="bill-to">
-                  <div className="section-label">Bill To</div>
-                  <div className="buyer-name">{buyerDetails.name}</div>
-                  <p>{buyerDetails.address}</p>
-                  <p className="gstin">GSTIN: {buyerDetails.gstin}</p>
-                  <p style={{ marginTop: 4, fontSize: 11, color: "#718096" }}>
-                    State: {buyerDetails.state}
-                  </p>
-                </div>
-
-                <div className="meta-box">
-                  <div className="meta-row">
-                    <span className="label">Invoice No.</span>
-                    <span className="value">{formData.invoiceNo || "—"}</span>
-                  </div>
-                  <div className="meta-row">
-                    <span className="label">Month</span>
-                    <span className="value">{formData.month}</span>
-                  </div>
-                  <div className="meta-row">
-                    <span className="label">Invoice Date</span>
-                    <span className="value">{formatDate(formData.invoiceDate) || "—"}</span>
-                  </div>
-                  <div className="meta-row">
-                    <span className="label">Place of Supply</span>
-                    <span className="value">{formData.placeOfSupply}</span>
-                  </div>
+                  <div>⚠️ Some fields are empty or invalid — please fix them first:</div>
+                  <ul>
+                    {errorList.slice(0, 6).map((e, i) => (
+                      <li key={i}>{e}</li>
+                    ))}
+                    {errorList.length > 6 && <li>...and {errorList.length - 6} more</li>}
+                  </ul>
                 </div>
               </div>
+            )}
 
-              <div className="table-wrap">
-                <table>
-                  <thead>
-                    <tr>
-                      <th style={{ width: "30px" }}>#</th>
-                      <th>Category / Description</th>
-                      <th>Sector</th>
-                      <th>Training Dates</th>
-                      <th className="center">Days<br/>/Person</th>
-                      <th className="center">Persons</th>
-                      <th className="num">Rate<br/>/Day/Person</th>
-                      <th className="num">Amount</th>
-                      <th className="num">Advance<br/>Received</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {formData.items.map((item, index) => {
-                      const amount =
-                        Number(item.persons || 0) *
-                        Number(item.daysPerPerson || 0) *
-                        Number(item.ratePerDay || 0);
-                      return (
-                        <tr key={item.id}>
-                          <td>{index + 1}</td>
-                          <td>
-                            <div className="item-category">
-                              {item.location || "—"}
-                            </div>
-                            <div className="item-sub">
-                              {getFinalDescription(item) || "—"}
-                            </div>
-                          </td>
-                          <td>{getFinalSector(item) || "—"}</td>
-                          <td>
-                            {item.startDate && item.endDate
-                              ? `${formatDate(item.startDate)} to ${formatDate(item.endDate)}`
-                              : "—"}
-                          </td>
-                          <td className="center">{item.daysPerPerson || "—"}</td>
-                          <td className="center">{item.persons || "—"}</td>
-                          <td className="num">
-                            ₹{Number(item.ratePerDay || 0).toFixed(2)}
-                          </td>
-                          <td className="num">₹{amount.toFixed(2)}</td>
-                          <td className="num">
-                            ₹{Number(item.advanceReceived || 0).toFixed(2)}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+            <div className="toolbar no-print">
+              <div className="toolbar-left">
+                <button
+                  className="btn-secondary"
+                  onClick={() => setCurrentView("home")}
+                >
+                  ← Back to Home
+                </button>
               </div>
-
-              <div className="summary-wrap">
-                <div className="summary">
-                  <div className="summary-row">
-                    <span className="label">Total Persons Trained</span>
-                    <span className="value">{totals.totalPersons}</span>
-                  </div>
-                  <div className="summary-row">
-                    <span className="label">Sub Total</span>
-                    <span className="value">₹{totals.subTotal.toFixed(2)}</span>
-                  </div>
-                  <div className="summary-row">
-                    <span className="label">CGST @ {formData.cgst}%</span>
-                    <span className="value">₹{totals.cgstAmount.toFixed(2)}</span>
-                  </div>
-                  <div className="summary-row">
-                    <span className="label">SGST @ {formData.sgst}%</span>
-                    <span className="value">₹{totals.sgstAmount.toFixed(2)}</span>
-                  </div>
-                  <div className="summary-row total">
-                    <span className="label">Gross Total</span>
-                    <span className="value">₹{totals.grossTotal.toFixed(2)}</span>
-                  </div>
-
-                  <div className="summary-row deduction">
-                    <span className="label">Less: Advance Received</span>
-                    <span className="value">− ₹{totals.totalAdvance.toFixed(2)}</span>
-                  </div>
-
-                  <div className="summary-row net">
-                    <span className="label">Net Payable</span>
-                    <span className="value">₹{totals.grandTotal.toFixed(2)}</span>
-                  </div>
-                </div>
+              <div className="toolbar-right">
+                <button className="btn-secondary" onClick={nextInvoiceNo}>
+                  ➕ Next Invoice No.
+                </button>
+                <button className="print-btn" onClick={handlePrint}>
+                  🖨️ Print / Save as PDF
+                </button>
               </div>
+            </div>
 
-              <div className="amount-words">
-                <strong>Amount in Words:</strong> {numberToWords(totals.grandTotal)}
-              </div>
+            <div className="layout">
+              {/* ============ FORM PANEL ============ */}
+              <div className="form-panel no-print">
+                <h2 className="form-title">🧾 Invoice Details</h2>
 
-              <div className="footer-grid">
-                <div className="bank-details">
-                  <div className="section-label">Payment Details</div>
-                  <p>
-                    <strong>Bank:</strong> CANARA BANK<br />
-                    <strong>A/C No.:</strong> 120041033031<br />
-                    <strong>IFSC:</strong> CNRB0018450<br />
-                    <strong>Branch:</strong> BAPU BAZAR UDAIPUR
-                  </p>
-                  <p style={{ marginTop: 10, fontSize: 10, color: "#a0aec0" }}>
-                    * Please quote Invoice No. while making payment.
-                  </p>
-                </div>
-
-                <div className="signature">
-                  <div className="signature-images">
-                    {formData.signatureUrl && (
-                      <img
-                        src={formData.signatureUrl}
-                        alt="Signature & Seal"
-                        className="signature-img"
+                <div className="form-section">
+                  <h3>Invoice Info</h3>
+                  <div className="form-grid">
+                    <div className="field">
+                      <label>Invoice No. <span className="required">*</span></label>
+                      <input
+                        type="text"
+                        className={err("invoiceNo") ? "error" : ""}
+                        value={formData.invoiceNo}
+                        onChange={(e) => handleChange("invoiceNo", e.target.value)}
+                        onBlur={() => validateField("invoiceNo", formData.invoiceNo)}
                       />
-                    )}
+                      {err("invoiceNo") && <span className="error-msg">{err("invoiceNo")}</span>}
+                    </div>
+
+                    <div className="field">
+                      <label>Month <span className="required">*</span></label>
+                      <select
+                        value={formData.month}
+                        onChange={(e) => handleChange("month", e.target.value)}
+                      >
+                        {months.map((m) => (
+                          <option key={m} value={m}>{m}</option>
+                        ))}
+                      </select>
+                      <span className="hint">Changing month auto-fills Start/End dates</span>
+                    </div>
+
+                    <div className="field">
+                      <label>Invoice Date <span className="required">*</span></label>
+                      <input
+                        type="date"
+                        className={err("invoiceDate") ? "error" : ""}
+                        value={formData.invoiceDate}
+                        onChange={(e) => handleChange("invoiceDate", e.target.value)}
+                        onBlur={() => validateField("invoiceDate", formData.invoiceDate)}
+                      />
+                      {err("invoiceDate") && <span className="error-msg">{err("invoiceDate")}</span>}
+                    </div>
+
+                    <div className="field">
+                      <label>Place of Supply</label>
+                      <select
+                        value={formData.placeOfSupply}
+                        onChange={(e) => handleChange("placeOfSupply", e.target.value)}
+                      >
+                        <option value="Rajasthan">Rajasthan</option>
+                        <option value="Telangana">Telangana</option>
+                        <option value="Gujarat">Gujarat</option>
+                        <option value="Maharashtra">Maharashtra</option>
+                        <option value="Delhi">Delhi</option>
+                      </select>
+                    </div>
+
+                    <div className="field">
+                      <label>CGST %</label>
+                      <select
+                        value={formData.cgst}
+                        onChange={(e) => handleChange("cgst", parseFloat(e.target.value))}
+                      >
+                        <option value={0}>0%</option>
+                        <option value={2.5}>2.5%</option>
+                        <option value={6}>6%</option>
+                        <option value={9}>9%</option>
+                      </select>
+                    </div>
+
+                    <div className="field">
+                      <label>SGST %</label>
+                      <select
+                        value={formData.sgst}
+                        onChange={(e) => handleChange("sgst", parseFloat(e.target.value))}
+                      >
+                        <option value={0}>0%</option>
+                        <option value={2.5}>2.5%</option>
+                        <option value={6}>6%</option>
+                        <option value={9}>9%</option>
+                      </select>
+                    </div>
                   </div>
-                  <div className="signature-line">Authorised Signatory</div>
-                  <div className="signature-firm">{businessDetails.firmName}</div>
+                </div>
+
+                {/* ============ SIGNATURE + SEAL ============ */}
+                <div className="form-section">
+                  <h3>Signature &amp; Seal</h3>
+                  <div className="form-grid">
+                    <div className="field full">
+                      <label>Upload Signature + Seal (single PNG)</label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) =>
+                          handleFileUpload("signatureUrl", e.target.files[0])
+                        }
+                      />
+                      {formData.signatureUrl && (
+                        <div className="upload-preview">
+                          <img src={formData.signatureUrl} alt="Signature & Seal preview" />
+                          <div>
+                            <button
+                              className="btn-clear"
+                              type="button"
+                              onClick={() =>
+                                setFormData((prev) => ({ ...prev, signatureUrl: "" }))
+                              }
+                            >
+                              ✕ Remove
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                      <span className="hint">
+                        Transparent PNG best hai — Next Invoice par bhi retain rahega
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form-section">
+                  <div className="items-header">
+                    <h3>Training Items</h3>
+                    <button className="btn-add" onClick={addItem}>+ Add Item</button>
+                  </div>
+
+                  <datalist id="location-suggestions">
+                    {locationSuggestions.map((loc) => (
+                      <option key={loc} value={loc} />
+                    ))}
+                  </datalist>
+
+                  {formData.items.map((item, index) => {
+                    const itemHasError = ["location", "description", "sector", "customDescription", "customSector", "startDate", "endDate", "persons", "daysPerPerson", "ratePerDay", "advanceReceived"]
+                      .some((f) => err(`items.${index}.${f}`));
+                    return (
+                      <div key={item.id} className={`item-card ${itemHasError ? "has-error" : ""}`}>
+                        <div className="item-card-header">
+                          <span>Item #{index + 1}</span>
+                          {formData.items.length > 1 && (
+                            <button className="btn-remove" onClick={() => removeItem(index)}>
+                              ✕
+                            </button>
+                          )}
+                        </div>
+
+                        <div className="form-grid">
+                          <div className="field full">
+                            <label>Training Location <span className="required">*</span></label>
+                            <input
+                              type="text"
+                              list="location-suggestions"
+                              placeholder="Type or select (Rajasthan districts)"
+                              className={err(`items.${index}.location`) ? "error" : ""}
+                              value={item.location}
+                              onChange={(e) => updateItem(index, "location", e.target.value)}
+                              onBlur={() => validateField(`items.${index}.location`, item.location)}
+                            />
+                            <span className="hint">Suggestions from all 41 districts of Rajasthan</span>
+                            {err(`items.${index}.location`) && (
+                              <span className="error-msg">{err(`items.${index}.location`)}</span>
+                            )}
+                          </div>
+
+                          <div className="field full">
+                            <label>Description / Type <span className="required">*</span></label>
+                            <select
+                              className={err(`items.${index}.description`) ? "error" : ""}
+                              value={item.description}
+                              onChange={(e) => updateItem(index, "description", e.target.value)}
+                              onBlur={() => validateField(`items.${index}.description`, item.description)}
+                            >
+                              {descriptionOptions.map((d) => (
+                                <option key={d} value={d}>{d}</option>
+                              ))}
+                            </select>
+                            {err(`items.${index}.description`) && (
+                              <span className="error-msg">{err(`items.${index}.description`)}</span>
+                            )}
+                          </div>
+
+                          {item.description === "Other" && (
+                            <div className="field full">
+                              <label>Custom Description <span className="required">*</span></label>
+                              <input
+                                type="text"
+                                placeholder="Type your custom description"
+                                className={err(`items.${index}.customDescription`) ? "error" : ""}
+                                value={item.customDescription}
+                                onChange={(e) => updateItem(index, "customDescription", e.target.value)}
+                                onBlur={() => validateField(`items.${index}.customDescription`, item.customDescription)}
+                              />
+                              {err(`items.${index}.customDescription`) && (
+                                <span className="error-msg">{err(`items.${index}.customDescription`)}</span>
+                              )}
+                            </div>
+                          )}
+
+                          <div className="field full">
+                            <label>Sector <span className="required">*</span></label>
+                            <select
+                              className={err(`items.${index}.sector`) ? "error" : ""}
+                              value={item.sector}
+                              onChange={(e) => updateItem(index, "sector", e.target.value)}
+                              onBlur={() => validateField(`items.${index}.sector`, item.sector)}
+                            >
+                              {sectorOptions.map((s) => (
+                                <option key={s} value={s}>{s}</option>
+                              ))}
+                            </select>
+                            {err(`items.${index}.sector`) && (
+                              <span className="error-msg">{err(`items.${index}.sector`)}</span>
+                            )}
+                          </div>
+
+                          {item.sector === "Other" && (
+                            <div className="field full">
+                              <label>Custom Sector <span className="required">*</span></label>
+                              <input
+                                type="text"
+                                placeholder="Type your custom sector"
+                                className={err(`items.${index}.customSector`) ? "error" : ""}
+                                value={item.customSector}
+                                onChange={(e) => updateItem(index, "customSector", e.target.value)}
+                                onBlur={() => validateField(`items.${index}.customSector`, item.customSector)}
+                              />
+                              {err(`items.${index}.customSector`) && (
+                                <span className="error-msg">{err(`items.${index}.customSector`)}</span>
+                              )}
+                            </div>
+                          )}
+
+                          <div className="field">
+                            <label>Start Date <span className="required">*</span></label>
+                            <input
+                              type="date"
+                              className={err(`items.${index}.startDate`) ? "error" : ""}
+                              value={item.startDate}
+                              onChange={(e) => updateItem(index, "startDate", e.target.value)}
+                              onBlur={() => validateField(`items.${index}.startDate`, item.startDate)}
+                            />
+                            {err(`items.${index}.startDate`) && (
+                              <span className="error-msg">{err(`items.${index}.startDate`)}</span>
+                            )}
+                          </div>
+
+                          <div className="field">
+                            <label>End Date <span className="required">*</span></label>
+                            <input
+                              type="date"
+                              className={err(`items.${index}.endDate`) ? "error" : ""}
+                              value={item.endDate}
+                              onChange={(e) => updateItem(index, "endDate", e.target.value)}
+                              onBlur={() => validateField(`items.${index}.endDate`, item.endDate)}
+                            />
+                            {err(`items.${index}.endDate`) && (
+                              <span className="error-msg">{err(`items.${index}.endDate`)}</span>
+                            )}
+                          </div>
+
+                          <div className="field">
+                            <label>Days / Person <span className="required">*</span></label>
+                            <input
+                              type="number"
+                              min="1"
+                              className={err(`items.${index}.daysPerPerson`) ? "error" : ""}
+                              value={item.daysPerPerson}
+                              onChange={(e) => updateItem(index, "daysPerPerson", e.target.value)}
+                              onBlur={() => validateField(`items.${index}.daysPerPerson`, item.daysPerPerson)}
+                            />
+                            <span className="hint">Auto-calculated from dates</span>
+                            {err(`items.${index}.daysPerPerson`) && (
+                              <span className="error-msg">{err(`items.${index}.daysPerPerson`)}</span>
+                            )}
+                          </div>
+
+                          <div className="field">
+                            <label>Total Persons <span className="required">*</span></label>
+                            <input
+                              type="number"
+                              min="1"
+                              className={err(`items.${index}.persons`) ? "error" : ""}
+                              value={item.persons}
+                              onChange={(e) => updateItem(index, "persons", e.target.value)}
+                              onBlur={() => validateField(`items.${index}.persons`, item.persons)}
+                            />
+                            {err(`items.${index}.persons`) && (
+                              <span className="error-msg">{err(`items.${index}.persons`)}</span>
+                            )}
+                          </div>
+
+                          <div className="field full">
+                            <label>Rate / Day / Person (₹) <span className="required">*</span></label>
+                            <input
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              placeholder="Enter rate"
+                              className={err(`items.${index}.ratePerDay`) ? "error" : ""}
+                              value={item.ratePerDay}
+                              onChange={(e) => updateItem(index, "ratePerDay", e.target.value)}
+                              onBlur={() => validateField(`items.${index}.ratePerDay`, item.ratePerDay)}
+                            />
+                            {err(`items.${index}.ratePerDay`) && (
+                              <span className="error-msg">{err(`items.${index}.ratePerDay`)}</span>
+                            )}
+                          </div>
+
+                          <div className="field full">
+                            <label>Advance Received (₹) <span className="required">*</span></label>
+                            <input
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              placeholder="Advance received for this training"
+                              className={err(`items.${index}.advanceReceived`) ? "error" : ""}
+                              value={item.advanceReceived}
+                              onChange={(e) => updateItem(index, "advanceReceived", e.target.value)}
+                              onBlur={() => validateField(`items.${index}.advanceReceived`, item.advanceReceived)}
+                            />
+                            <span className="hint">Har training ka advance alag ho sakta hai</span>
+                            {err(`items.${index}.advanceReceived`) && (
+                              <span className="error-msg">{err(`items.${index}.advanceReceived`)}</span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
-              <div className="terms">
-                <strong>Declaration:</strong> We declare that this invoice shows the actual
-                price of the services described and that all particulars are true and correct.
+              {/* ============ INVOICE PREVIEW ============ */}
+              <div className="invoice">
+                <header className="header">
+                  <div className="header-top">
+                    <div>
+                      <div className="firm-name">{businessDetails.firmName}</div>
+                      <div className="firm-tagline">{businessDetails.tagline}</div>
+                    </div>
+                    <div className="header-contact">
+                      <div>{businessDetails.addressLine1}</div>
+                      <div><strong>{businessDetails.phone}</strong></div>
+                      <div><strong>GSTIN:</strong> {businessDetails.gstin}</div>
+                      <div><strong>State:</strong> {businessDetails.state} (Code: {businessDetails.stateCode})</div>
+                    </div>
+                  </div>
+                  <div className="invoice-title">Tax Invoice</div>
+                </header>
+
+                <div className="body">
+                  <div className="top-grid">
+                    <div className="bill-to">
+                      <div className="section-label">Bill To</div>
+                      <div className="buyer-name">{buyerDetails.name}</div>
+                      <p>{buyerDetails.address}</p>
+                      <p className="gstin">GSTIN: {buyerDetails.gstin}</p>
+                      <p style={{ marginTop: 4, fontSize: 11, color: "#718096" }}>
+                        State: {buyerDetails.state}
+                      </p>
+                    </div>
+
+                    <div className="meta-box">
+                      <div className="meta-row">
+                        <span className="label">Invoice No.</span>
+                        <span className="value">{formData.invoiceNo || "—"}</span>
+                      </div>
+                      <div className="meta-row">
+                        <span className="label">Month</span>
+                        <span className="value">{formData.month}</span>
+                      </div>
+                      <div className="meta-row">
+                        <span className="label">Invoice Date</span>
+                        <span className="value">{formatDate(formData.invoiceDate) || "—"}</span>
+                      </div>
+                      <div className="meta-row">
+                        <span className="label">Place of Supply</span>
+                        <span className="value">{formData.placeOfSupply}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="table-wrap">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th style={{ width: "30px" }}>#</th>
+                          <th>Category / Description</th>
+                          <th>Sector</th>
+                          <th>Training Dates</th>
+                          <th className="center">Days<br/>/Person</th>
+                          <th className="center">Persons</th>
+                          <th className="num">Rate<br/>/Day/Person</th>
+                          <th className="num">Amount</th>
+                          <th className="num">Advance<br/>Received</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {formData.items.map((item, index) => {
+                          const amount =
+                            Number(item.persons || 0) *
+                            Number(item.daysPerPerson || 0) *
+                            Number(item.ratePerDay || 0);
+                          return (
+                            <tr key={item.id}>
+                              <td>{index + 1}</td>
+                              <td>
+                                <div className="item-category">
+                                  {item.location || "—"}
+                                </div>
+                                <div className="item-sub">
+                                  {getFinalDescription(item) || "—"}
+                                </div>
+                              </td>
+                              <td>{getFinalSector(item) || "—"}</td>
+                              <td>
+                                {item.startDate && item.endDate
+                                  ? `${formatDate(item.startDate)} to ${formatDate(item.endDate)}`
+                                  : "—"}
+                              </td>
+                              <td className="center">{item.daysPerPerson || "—"}</td>
+                              <td className="center">{item.persons || "—"}</td>
+                              <td className="num">
+                                ₹{Number(item.ratePerDay || 0).toFixed(2)}
+                              </td>
+                              <td className="num">₹{amount.toFixed(2)}</td>
+                              <td className="num">
+                                ₹{Number(item.advanceReceived || 0).toFixed(2)}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div className="summary-wrap">
+                    <div className="summary">
+                      <div className="summary-row">
+                        <span className="label">Total Persons Trained</span>
+                        <span className="value">{totals.totalPersons}</span>
+                      </div>
+                      <div className="summary-row">
+                        <span className="label">Sub Total</span>
+                        <span className="value">₹{totals.subTotal.toFixed(2)}</span>
+                      </div>
+                      <div className="summary-row">
+                        <span className="label">CGST @ {formData.cgst}%</span>
+                        <span className="value">₹{totals.cgstAmount.toFixed(2)}</span>
+                      </div>
+                      <div className="summary-row">
+                        <span className="label">SGST @ {formData.sgst}%</span>
+                        <span className="value">₹{totals.sgstAmount.toFixed(2)}</span>
+                      </div>
+                      <div className="summary-row total">
+                        <span className="label">Gross Total</span>
+                        <span className="value">₹{totals.grossTotal.toFixed(2)}</span>
+                      </div>
+
+                      <div className="summary-row deduction">
+                        <span className="label">Less: Advance Received</span>
+                        <span className="value">− ₹{totals.totalAdvance.toFixed(2)}</span>
+                      </div>
+
+                      <div className="summary-row net">
+                        <span className="label">Net Payable</span>
+                        <span className="value">₹{totals.grandTotal.toFixed(2)}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="amount-words">
+                    <strong>Amount in Words:</strong> {numberToWords(totals.grandTotal)}
+                  </div>
+
+                  <div className="footer-grid">
+                    <div className="bank-details">
+                      <div className="section-label">Payment Details</div>
+                      <p>
+                        <strong>Bank:</strong> CANARA BANK<br />
+                        <strong>A/C No.:</strong> 120041033031<br />
+                        <strong>IFSC:</strong> CNRB0018450<br />
+                        <strong>Branch:</strong> BAPU BAZAR UDAIPUR
+                      </p>
+                      <p style={{ marginTop: 10, fontSize: 10, color: "#a0aec0" }}>
+                        * Please quote Invoice No. while making payment.
+                      </p>
+                    </div>
+
+                    <div className="signature">
+                      <div className="signature-images">
+                        {formData.signatureUrl && (
+                          <img
+                            src={formData.signatureUrl}
+                            alt="Signature & Seal"
+                            className="signature-img"
+                          />
+                        )}
+                      </div>
+                      <div className="signature-line">Authorised Signatory</div>
+                      <div className="signature-firm">{businessDetails.firmName}</div>
+                    </div>
+                  </div>
+
+                  <div className="terms">
+                    <strong>Declaration:</strong> We declare that this invoice shows the actual
+                    price of the services described and that all particulars are true and correct.
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </>
   );
