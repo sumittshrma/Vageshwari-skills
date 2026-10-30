@@ -69,6 +69,30 @@ const months = [
 ];
 
 /* ============================================================
+   PERMISSION LETTER DEFAULT STATE
+   ============================================================ */
+const initialPermissionData = {
+  district: "Dungarpur",
+  programs: [
+    {
+      id: 1,
+      title: "Capacity Building of Entrepreneurs",
+      block: "Sagwara",
+      duration: "14th to 16th October, 2026",
+      venue: "Community Hall, Sagwara",
+      sector: "Multisector",
+    },
+  ],
+  letterDate: "October 2026",
+  letterPlace: "Jaipur, Rajasthan",
+  signatoryName: "Dr. Ekta Chandel",
+  signatoryTitle: "State Project Lead - RAMP Rajasthan",
+  organization: "National Institute for MSME (ni-msme)",
+  mobile: "9406879551",
+  email: "rampnimsmeraj@gmail.com",
+};
+
+/* ============================================================
    UTILS
    ============================================================ */
 const getTodayISO = () => {
@@ -665,6 +689,64 @@ const styles = `
   }
   .terms strong { color: #4a5568; }
 
+  /* PERMISSION LETTER STYLES */
+  .permission-letter-container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .letter-page {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 28px rgba(0,0,0,0.08);
+    padding: 36px 40px;
+    margin-bottom: 24px;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    color: #1a202c;
+    line-height: 1.6;
+    font-size: 13.5px;
+  }
+  .letter-tag {
+    display: inline-block;
+    background: #edf2f7;
+    border: 1px solid #cbd5e0;
+    color: #2d3748;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: sans-serif;
+    padding: 3px 10px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .letter-to { margin-bottom: 16px; font-weight: 500; }
+  .letter-subject { font-weight: 700; margin-bottom: 16px; text-decoration: underline; }
+  .letter-body { text-align: justify; margin-bottom: 16px; }
+  .letter-programs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+    margin: 16px 0 20px;
+    font-family: sans-serif;
+    font-size: 12.5px;
+  }
+  .program-card-preview {
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    padding: 10px 12px;
+    background: #fdfdfd;
+  }
+  .program-card-preview strong { color: #2c5282; }
+  .letter-sign { margin-top: 28px; font-family: sans-serif; font-size: 13px; }
+  .letter-footer-box {
+    margin-top: 30px;
+    border: 1px dashed #718096;
+    padding: 14px 18px;
+    border-radius: 6px;
+    font-family: sans-serif;
+    font-size: 12px;
+    background: #fdfdfd;
+  }
+
   @media (max-width: 640px) {
     .navbar { padding: 12px 16px; }
     .brand-title { font-size: 14px; }
@@ -710,63 +792,16 @@ const styles = `
     }
     .no-print { display: none !important; }
     .layout { display: block; }
-    .invoice { 
+    .invoice, .letter-page { 
       box-shadow: none; 
       border-radius: 0; 
       max-width: 100%; 
       width: 100%;
     }
+    .letter-page { page-break-after: always; break-after: page; }
     .table-wrap { overflow: visible; }
     table { min-width: 0; font-size: 9.5px; }
-
-    .header { padding: 16px 18px 14px; }
-    .firm-name { font-size: 16px; }
-    .firm-tagline { font-size: 9.5px; }
-    .header-contact { font-size: 10.5px; min-width: 220px; }
-    .invoice-title { margin-top: 10px; padding: 4px 14px; font-size: 10.5px; }
-
-    .body { padding: 14px 18px 16px; }
-    .top-grid { margin-bottom: 14px; gap: 14px; }
-    .meta-box { padding: 10px 12px; }
-    .meta-row { padding: 4px 0; font-size: 11px; }
-
-    thead th { padding: 6px 4px; font-size: 8.5px; }
-    tbody td { padding: 6px 4px; font-size: 9.5px; }
-    .item-sub { font-size: 9px; }
-
-    .summary { max-width: 320px; }
-    .summary-row { padding: 5px 10px; font-size: 11px; }
-    .summary-row.total { padding: 8px 10px; }
-    .summary-row.total .value { font-size: 13px; }
-    .summary-row.net { padding: 8px 10px; }
-    .summary-row.net .value { font-size: 13px; }
-
-    .amount-words { padding: 8px 12px; font-size: 10.5px; margin-bottom: 14px; }
-
-    .footer-grid { padding-top: 12px; gap: 18px; }
-    .signature { min-height: 110px; }
-    .signature-images { height: 75px; }
-    .signature-img { max-height: 75px; max-width: 170px; }
-    .signature-line { font-size: 10.5px; }
-    .signature-firm { font-size: 10px; }
-
-    .terms { margin-top: 10px; padding-top: 10px; font-size: 10px; }
-
-    .summary-wrap,
-    .amount-words,
-    .footer-grid,
-    .terms {
-      page-break-inside: avoid;
-      break-inside: avoid;
-    }
-
-    .header, thead th, .summary-row.total, .summary-row.net, .invoice-title, .amount-words,
-    tbody tr:nth-child(even) {
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
-    }
   }
-  @page { size: A4; margin: 10mm; }
 `;
 
 /* ============================================================
@@ -815,13 +850,53 @@ const buildDefaultForm = (invoiceNo = "TRAINING/UDR/01") => {
    MAIN APP COMPONENT
    ============================================================ */
 export default function App() {
-  // Navigation view state: 'home' | 'invoice'
+  // Navigation view state: 'home' | 'invoice' | 'permission'
   const [currentView, setCurrentView] = useState("home");
+
+  // Permission Letter State
+  const [permData, setPermData] = useState(initialPermissionData);
 
   // Form State
   const [formData, setFormData] = useState(buildDefaultForm());
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
+
+  const handlePermChange = (field, val) => {
+    setPermData((prev) => ({ ...prev, [field]: val }));
+  };
+
+  const handleProgramChange = (index, field, val) => {
+    setPermData((prev) => {
+      const updated = [...prev.programs];
+      updated[index] = { ...updated[index], [field]: val };
+      return { ...prev, programs: updated };
+    });
+  };
+
+  const addPermissionProgram = () => {
+    setPermData((prev) => ({
+      ...prev,
+      programs: [
+        ...prev.programs,
+        {
+          id: Date.now(),
+          title: "Capacity Building of Entrepreneurs",
+          block: "",
+          duration: "14th to 16th October, 2026",
+          venue: "",
+          sector: "Multisector",
+        },
+      ],
+    }));
+  };
+
+  const removePermissionProgram = (index) => {
+    if (permData.programs.length === 1) return;
+    setPermData((prev) => ({
+      ...prev,
+      programs: prev.programs.filter((_, i) => i !== index),
+    }));
+  };
 
   const handleChange = (field, value) => {
     setFormData((prev) => {
@@ -1068,7 +1143,7 @@ export default function App() {
     <>
       <style>{styles}</style>
 
-      {/* Navigation Header */}
+      {/* Top Navbar */}
       <nav className="navbar no-print">
         <div className="nav-brand" onClick={() => setCurrentView("home")}>
           <div className="brand-logo-icon">V</div>
@@ -1090,6 +1165,12 @@ export default function App() {
           >
             🧾 Invoice Generator
           </button>
+          <button
+            className={`nav-btn ${currentView === "permission" ? "active" : ""}`}
+            onClick={() => setCurrentView("permission")}
+          >
+            📄 Permission Letter
+          </button>
         </div>
       </nav>
 
@@ -1105,7 +1186,7 @@ export default function App() {
                 <span className="hero-badge">Official Training Portal</span>
                 <h1 className="hero-title">{businessDetails.firmName}</h1>
                 <p className="hero-desc">
-                  Empowering professionals with specialized Capacity Building &amp; Skill Development programs across Rajasthan. Create GST-compliant GST invoices in seconds.
+                  Empowering professionals with specialized Capacity Building &amp; Skill Development programs across Rajasthan. Create GST-compliant invoices and RAMP permission letters in seconds.
                 </p>
                 <div className="hero-actions">
                   <button
@@ -1115,13 +1196,11 @@ export default function App() {
                     🧾 Go to Invoice Generator
                   </button>
                   <button
-                    className="btn-hero-secondary"
-                    onClick={() => {
-                      const el = document.getElementById("biz-details-card");
-                      if (el) el.scrollIntoView({ behavior: "smooth" });
-                    }}
+                    className="btn-hero-primary"
+                    style={{ background: "#2c5282", color: "#fff" }}
+                    onClick={() => setCurrentView("permission")}
                   >
-                    📋 View Business Details
+                    📄 Generate Permission Letter
                   </button>
                 </div>
               </div>
@@ -1197,6 +1276,10 @@ export default function App() {
               <div className="dash-card-title">⚡ Key System Features</div>
               <div className="features-grid">
                 <div className="feature-box">
+                  <div className="feature-title">📄 RAMP Permission Letter</div>
+                  <div className="feature-desc">Generate Office &amp; Receiving copies for GMDIC permissions instantly.</div>
+                </div>
+                <div className="feature-box">
                   <div className="feature-title">📍 All 41 Districts</div>
                   <div className="feature-desc">Integrated autocomplete suggestions for training locations across Rajasthan.</div>
                 </div>
@@ -1205,12 +1288,313 @@ export default function App() {
                   <div className="feature-desc">Select a month to auto-populate exact date ranges and person-day calculations.</div>
                 </div>
                 <div className="feature-box">
-                  <div className="feature-title">🔏 Signature &amp; Seal</div>
-                  <div className="feature-desc">Upload signature image once; it automatically retains across consecutive invoices.</div>
-                </div>
-                <div className="feature-box">
                   <div className="feature-title">🖨️ A4 PDF Print Ready</div>
                   <div className="feature-desc">Pixel-perfect print styling tailored for single-page A4 PDF downloads.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ============================================================
+           VIEW 3: PERMISSION LETTER GENERATOR PAGE
+           ============================================================ */}
+        {currentView === "permission" && (
+          <div>
+            <div className="toolbar no-print">
+              <div className="toolbar-left">
+                <button
+                  className="btn-secondary"
+                  onClick={() => setCurrentView("home")}
+                >
+                  ← Back to Home
+                </button>
+              </div>
+              <div className="toolbar-right">
+                <button className="print-btn" onClick={() => window.print()}>
+                  🖨️ Print / Save Permission Letter PDF
+                </button>
+              </div>
+            </div>
+
+            <div className="layout">
+              {/* Permission Letter Editor Panel */}
+              <div className="form-panel no-print">
+                <h2 className="form-title">📄 Edit Permission Letter</h2>
+
+                <div className="form-section">
+                  <h3>General Details</h3>
+                  <div className="form-grid">
+                    <div className="field full">
+                      <label>District Name</label>
+                      <input
+                        type="text"
+                        list="location-suggestions"
+                        value={permData.district}
+                        onChange={(e) => handlePermChange("district", e.target.value)}
+                        placeholder="e.g. Dungarpur"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form-section">
+                  <div className="items-header">
+                    <h3>Training Programs ({permData.programs.length})</h3>
+                    <button className="btn-add" onClick={addPermissionProgram}>
+                      + Add Program
+                    </button>
+                  </div>
+
+                  {permData.programs.map((prog, idx) => (
+                    <div key={prog.id} className="item-card">
+                      <div className="item-card-header">
+                        <span>Program #{idx + 1}</span>
+                        {permData.programs.length > 1 && (
+                          <button
+                            className="btn-remove"
+                            onClick={() => removePermissionProgram(idx)}
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
+
+                      <div className="form-grid">
+                        <div className="field full">
+                          <label>Program Name / Subject</label>
+                          <input
+                            type="text"
+                            value={prog.title}
+                            onChange={(e) =>
+                              handleProgramChange(idx, "title", e.target.value)
+                            }
+                            placeholder="e.g. Capacity Building of Entrepreneurs"
+                          />
+                        </div>
+
+                        <div className="field">
+                          <label>Block / ULB</label>
+                          <input
+                            type="text"
+                            value={prog.block}
+                            onChange={(e) =>
+                              handleProgramChange(idx, "block", e.target.value)
+                            }
+                            placeholder="e.g. Sagwara"
+                          />
+                        </div>
+
+                        <div className="field">
+                          <label>Sector</label>
+                          <input
+                            type="text"
+                            value={prog.sector}
+                            onChange={(e) =>
+                              handleProgramChange(idx, "sector", e.target.value)
+                            }
+                            placeholder="e.g. Stone / Multisector"
+                          />
+                        </div>
+
+                        <div className="field full">
+                          <label>Training Duration</label>
+                          <input
+                            type="text"
+                            value={prog.duration}
+                            onChange={(e) =>
+                              handleProgramChange(idx, "duration", e.target.value)
+                            }
+                            placeholder="e.g. 14th to 16th October, 2026"
+                          />
+                        </div>
+
+                        <div className="field full">
+                          <label>Venue Address</label>
+                          <input
+                            type="text"
+                            value={prog.venue}
+                            onChange={(e) =>
+                              handleProgramChange(idx, "venue", e.target.value)
+                            }
+                            placeholder="e.g. Community Hall, Sagwara"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="form-section">
+                  <h3>Signatory &amp; Meta</h3>
+                  <div className="form-grid">
+                    <div className="field full">
+                      <label>Signatory Name</label>
+                      <input
+                        type="text"
+                        value={permData.signatoryName}
+                        onChange={(e) => handlePermChange("signatoryName", e.target.value)}
+                      />
+                    </div>
+                    <div className="field full">
+                      <label>Designation / Title</label>
+                      <input
+                        type="text"
+                        value={permData.signatoryTitle}
+                        onChange={(e) => handlePermChange("signatoryTitle", e.target.value)}
+                      />
+                    </div>
+                    <div className="field">
+                      <label>Mobile Number</label>
+                      <input
+                        type="text"
+                        value={permData.mobile}
+                        onChange={(e) => handlePermChange("mobile", e.target.value)}
+                      />
+                    </div>
+                    <div className="field">
+                      <label>Email ID</label>
+                      <input
+                        type="text"
+                        value={permData.email}
+                        onChange={(e) => handlePermChange("email", e.target.value)}
+                      />
+                    </div>
+                    <div className="field">
+                      <label>Letter Date</label>
+                      <input
+                        type="text"
+                        value={permData.letterDate}
+                        onChange={(e) => handlePermChange("letterDate", e.target.value)}
+                      />
+                    </div>
+                    <div className="field">
+                      <label>Place</label>
+                      <input
+                        type="text"
+                        value={permData.letterPlace}
+                        onChange={(e) => handlePermChange("letterPlace", e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Permission Letter Document Previews */}
+              <div className="permission-letter-container">
+                {/* Office Copy */}
+                <div className="letter-page">
+                  <span className="letter-tag">Office Copy (To be retained by GMDIC)</span>
+                  
+                  <div className="letter-to">
+                    To<br />
+                    <strong>The General Manager</strong><br />
+                    District Industries Centre (DIC)<br />
+                    {permData.district || "[District]"}, Rajasthan
+                  </div>
+
+                  <div className="letter-subject">
+                    Subject: Seeking permission for organising a RAMP training program in the {permData.district || "[District]"} district.
+                  </div>
+
+                  <p>Respected Sir/Madam,</p>
+                  <p style={{ marginTop: 8 }}>Greetings from the National Institute for Micro, Small and Medium Enterprises (ni-msme),</p>
+
+                  <p className="letter-body" style={{ marginTop: 10 }}>
+                    I, <strong>{permData.signatoryName}</strong>, {permData.signatoryTitle}, on behalf of ni-msme, respectfully seek your permission to organise training program(s) under the Raising and Accelerating MSME Performance (RAMP) Scheme in your district. The details of the proposed training program(s) are as follows:
+                  </p>
+
+                  <div className="letter-programs-grid">
+                    {permData.programs.map((p, i) => (
+                      <div key={p.id} className="program-card-preview">
+                        <div><strong>{i + 1}. {p.title || "—"}</strong></div>
+                        <div><strong>District:</strong> {permData.district || "—"}</div>
+                        {p.block && <div><strong>Block/ULB:</strong> {p.block}</div>}
+                        {p.sector && <div><strong>Sector:</strong> {p.sector}</div>}
+                        <div><strong>Training Duration:</strong> {p.duration || "—"}</div>
+                        <div><strong>Venue:</strong> {p.venue || "___________________________"}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <p className="letter-body">
+                    The objective of this program is to strengthen participants' capabilities through sector-specific capacity building, skill enhancement, and entrepreneurial development under the RAMP initiative. We kindly request your approval and support for conducting the above-mentioned training program in your district. Your guidance and cooperation will greatly help in the successful implementation of the program.
+                  </p>
+
+                  <p>Thank you for your continued support.</p>
+
+                  <div className="letter-sign">
+                    Yours sincerely,<br /><br />
+                    <strong>{permData.signatoryName}</strong><br />
+                    {permData.signatoryTitle}<br />
+                    {permData.organization}<br />
+                    <div style={{ marginTop: 12 }}>
+                      Date: {permData.letterDate}<br />
+                      Place: {permData.letterPlace}
+                    </div>
+                  </div>
+
+                  <div className="letter-footer-box">
+                    <strong>Permission Status by GMDIC:</strong> Approved / Not Approved
+                    <div style={{ marginTop: 30, display: "flex", justifyContent: "space-between" }}>
+                      <span>Signature of GMDIC with Seal: _______________________</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Receiving Copy */}
+                <div className="letter-page">
+                  <span className="letter-tag">Receiving Copy (Acknowledgement Copy)</span>
+
+                  <div className="letter-to">
+                    To<br />
+                    <strong>The General Manager</strong><br />
+                    District Industries Centre (DIC)<br />
+                    {permData.district || "[District]"}, Rajasthan
+                  </div>
+
+                  <div className="letter-subject">
+                    Subject: Submission of request for permission to organize RAMP training program
+                  </div>
+
+                  <p>Respected Sir/Madam,</p>
+
+                  <p className="letter-body" style={{ marginTop: 10 }}>
+                    Kindly acknowledge receipt of this request letter submitted by <strong>{permData.signatoryName}</strong>, {permData.signatoryTitle}, ni-msme, regarding permission for organizing the following RAMP training program(s) in your district:
+                  </p>
+
+                  <div className="letter-programs-grid">
+                    {permData.programs.map((p, i) => (
+                      <div key={p.id} className="program-card-preview">
+                        <div><strong>{i + 1}. {p.title || "—"}</strong></div>
+                        <div><strong>District:</strong> {permData.district || "—"}</div>
+                        {p.block && <div><strong>Block/ULB:</strong> {p.block}</div>}
+                        {p.sector && <div><strong>Sector:</strong> {p.sector}</div>}
+                        <div><strong>Training Duration:</strong> {p.duration || "—"}</div>
+                        <div><strong>Venue:</strong> {p.venue || "___________________________"}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <p>Submitted for your kind permission and necessary action.</p>
+
+                  <div className="letter-sign">
+                    Yours sincerely,<br /><br />
+                    <strong>{permData.signatoryName}</strong><br />
+                    {permData.signatoryTitle}<br />
+                    {permData.organization}<br />
+                    Mobile Number: {permData.mobile}<br />
+                    Email: {permData.email}
+                  </div>
+
+                  <div className="letter-footer-box">
+                    <strong>Receiving Acknowledgement (Office Use)</strong><br />
+                    Received by the office of General Manager, DIC {permData.district}<br /><br />
+                    Date of Receipt: _____________________<br />
+                    Signature: ___________________________<br />
+                    Name &amp; Designation: _________________<br />
+                    Office Seal:
+                  </div>
                 </div>
               </div>
             </div>
